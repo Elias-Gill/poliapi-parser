@@ -1,8 +1,6 @@
 package excelParser
 
 // ----------------------- structs -------------------
-var filaEncs encabezado
-
 type Dias struct {
 	Lunes     string `json:"lunes"`
 	Martes    string `json:"martes"`
@@ -14,18 +12,18 @@ type Dias struct {
 
 type Materia struct {
 	// general
-	Id       string `json:"id"`
-	Nombre   string `json:"nombre"`
-	Semestre string `json:"semestre"`
-	Seccion  string `json:"seccion"`
-	Profesor string `json:"profesor"`
+	Id         string `json:"id"`
+	Asignatura string `json:"nombre"`
+	Semestre   string `json:"semestre"`
+	Seccion    string `json:"seccion"`
+	Profesor   string `json:"profesor"`
 	// examenes
 	Parcial1 string `json:"parcial_1"`
 	Parcial2 string `json:"parcial_2"`
 	Final1   string `json:"final_1"`
 	Final2   string `json:"final_2"`
 	// horario de clase
-	Dias *Dias `json:"dias"`
+	Dias Dias `json:"dias"`
 }
 
 type examen struct {

@@ -1,6 +1,6 @@
 /*
-    Aqui se encuentran las funciones necesarias para parsear y determinar la posicion de los
-    encabezados
+   Aqui se encuentran las funciones necesarias para parsear y determinar la posicion de los
+   encabezados
 */
 
 package excelParser
@@ -12,8 +12,19 @@ type encabezado struct {
 	columna int
 }
 
-func parsearEncabezados(cols [][]string) map[int]encabezado {
-	var resultado map[int]encabezado
+type encExamen struct {
+	// dia
+	filaFecha int
+	colFecha  int
+	// hora
+	filaHora int
+	colHora  int
+}
+
+// guardar la posicion de los encabezados dentro de un map.
+// Cada encabezado esta relacionado con una constante (int) de forma preventiva
+func parsearEncabezados(cols [][]string, filaEncs encabezado) map[int]encabezado {
+	resultado := make(map[int]encabezado)
 	// recorrer coluna a columna
 	for col := filaEncs.columna; col < len(cols); col++ {
 		// ver a cual encabezado pertenece
@@ -23,11 +34,11 @@ func parsearEncabezados(cols [][]string) map[int]encabezado {
 		}
 		resultado[enc] = encabezado{fila: filaEncs.fila, columna: col}
 	}
-	return nil
+	return resultado
 }
 
 // La fila de encabezados empieza donde se encuentre la columna con "Item"
-func determFilaEncabezados(cols [][]string) (*encabezado, error) {
+func determFilaEncabezados(cols [][]string) (encabezado, error) {
 	var res encabezado
 	for i, col := range cols {
 		for k, row := range col {
@@ -37,12 +48,36 @@ func determFilaEncabezados(cols [][]string) (*encabezado, error) {
 			}
 		}
 	}
-	return &res, nil
+	return res, nil
 }
 
-// los examenes cuentan con una estructura de encabezados ligeramente diferente, por lo que se parsean 
+// los examenes cuentan con una estructura de encabezados ligeramente diferente, por lo que se parsean
 // a parte.
-func parsearEncasExamenes() map[int]encabezado {
-	// primero recorrer la fila de arriba, la cual contiene los encabezados de examenes
-	return nil
+func parsearEncsExamenes(cols [][]string, filaEncs encabezado) map[int]encExamen {
+	resultado := make(map[int]encExamen)
+	// recorrer columna a columna
+	for col := filaEncs.columna; col < len(cols); col++ {
+		// buscar en el encabezado superior a cual examen pertenece
+		enc, ok := examenes[cols[col][filaEncs.fila-1]]
+		if !ok {
+			continue
+		}
+
+		// parsear los encabezados de dia y hora
+		resultado[enc] = encExamen{
+			filaHora:  filaEncs.fila,
+			filaFecha: filaEncs.fila,
+			colHora:   col,
+			colFecha:  col + 1,
+		}
+
+		// aumentar en 1 la columna para evitar parsear de nuevo este encabezado
+		col++
+	}
+	return resultado
+}
+
+// funcion principal de la libreria
+func ParsearArchivo(file string) {
+
 }
