@@ -5,7 +5,11 @@
 
 package excelParser
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/xuri/excelize/v2"
+)
 
 type encabezado struct {
 	fila    int
@@ -21,9 +25,23 @@ type encExamen struct {
 	colHora  int
 }
 
+// La fila de encabezados empieza donde se encuentre la columna con "Item"
+func encontrarFilaEncabezados(cols [][]string) (encabezado, error) {
+	var res encabezado
+	for i, col := range cols {
+		for k, row := range col {
+			if strings.Contains(row, "Ítem") || strings.Contains(row, "Item") {
+				res = encabezado{fila: k, columna: i}
+				break
+			}
+		}
+	}
+	return res, nil
+}
+
 // guardar la posicion de los encabezados dentro de un map.
 // Cada encabezado esta relacionado con una constante (int) de forma preventiva
-func parsearEncabezados(cols [][]string, filaEncs encabezado) map[int]encabezado {
+func buscarEncabezados(cols [][]string, filaEncs encabezado) map[int]encabezado {
 	resultado := make(map[int]encabezado)
 	// recorrer coluna a columna
 	for col := filaEncs.columna; col < len(cols); col++ {
@@ -37,23 +55,9 @@ func parsearEncabezados(cols [][]string, filaEncs encabezado) map[int]encabezado
 	return resultado
 }
 
-// La fila de encabezados empieza donde se encuentre la columna con "Item"
-func determFilaEncabezados(cols [][]string) (encabezado, error) {
-	var res encabezado
-	for i, col := range cols {
-		for k, row := range col {
-			if strings.Contains(row, "Ítem") || strings.Contains(row, "Item") {
-				res = encabezado{fila: k, columna: i}
-				break
-			}
-		}
-	}
-	return res, nil
-}
-
 // los examenes cuentan con una estructura de encabezados ligeramente diferente, por lo que se parsean
 // a parte.
-func parsearEncsExamenes(cols [][]string, filaEncs encabezado) map[int]encExamen {
+func buscarEncsExamenes(cols [][]string, filaEncs encabezado) map[int]encExamen {
 	resultado := make(map[int]encExamen)
 	// recorrer columna a columna
 	for col := filaEncs.columna; col < len(cols); col++ {
@@ -78,6 +82,28 @@ func parsearEncsExamenes(cols [][]string, filaEncs encabezado) map[int]encExamen
 }
 
 // funcion principal de la libreria
-func ParsearArchivo(file string) {
+func ParsearArchivo(file string) ([][]Materia, error) {
+	f, err := excelize.OpenFile(file)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
 
+	var res [][]Materia
+	sheets := f.GetSheetList()
+    // parsear todas las hojas
+	for i := 1; i < len(sheets); i++ {
+		cols, err := f.GetCols(sheets[i])
+		if err != nil {
+			return nil, err
+		}
+
+		encs, err := encontrarFilaEncabezados(cols)
+		if err != nil {
+			return nil, err
+		}
+
+		res = append(res, cargarMaterias(cols, encs))
+	}
+	return res, nil
 }

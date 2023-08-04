@@ -3,6 +3,7 @@ Aqui se encuentran las funciones necesarias para crear y cargar la informacion d
 */
 package excelParser
 
+// cuenta la cantidad de materias que existen en unw pagina
 func contarMaterias(cols [][]string, filaEncs encabezado) int {
 	for i := filaEncs.fila + 1; i < len(cols[filaEncs.columna]); i++ {
 		// cuando encuentre el espacio en blanco significa que terminaron las materias
@@ -15,19 +16,19 @@ func contarMaterias(cols [][]string, filaEncs encabezado) int {
 }
 
 func cargarMaterias(cols [][]string, filaEncs encabezado) []Materia {
-	encs := parsearEncabezados(cols, filaEncs)
-	exms := parsearEncsExamenes(cols, filaEncs)
+	encs := buscarEncabezados(cols, filaEncs)
+	exms := buscarEncsExamenes(cols, filaEncs)
 
 	var res []Materia
 	for i := filaEncs.fila + 1; i < contarMaterias(cols, filaEncs); i++ {
 		res = append(res, Materia{
-			// info general de la carrera
+			// -- info general de la materia --
 			Profesor:   cols[encs[nombreDocente].columna][i] + " " + cols[encs[apellDocente].columna][i],
 			Asignatura: cols[encs[asignatura].columna][i],
 			Semestre:   cols[encs[nivel].columna][i],
 			Seccion:    cols[encs[seccion].columna][i],
 
-			// --- examenes ---
+			// -- examenes --
             // parciales
 			Parcial1: cols[exms[parcial1].colFecha][i] + 
             "  " + cols[exms[parcial1].colHora][i],
@@ -40,7 +41,7 @@ func cargarMaterias(cols [][]string, filaEncs encabezado) []Materia {
 			Final2:   cols[exms[final2].colFecha][i] + 
             "  " + cols[exms[final2].colHora][i],
 
-			// --- dias de clase ---
+			// -- dias de clase --
 			Dias: Dias{
 				Lunes:     cols[encs[lunes].columna][i],
 				Martes:    cols[encs[martes].columna][i],
