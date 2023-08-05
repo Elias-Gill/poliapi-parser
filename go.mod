@@ -1,4 +1,4 @@
-module github.com/elias-gill/excelParser
+module github.com/elias-gill/poliapi-parser
 
 go 1.20
 
