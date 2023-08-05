@@ -6,29 +6,29 @@ import (
 )
 
 var (
-    file *excelize.File
-    cols [][]string
+	file *excelize.File
+	cols [][]string
 )
 
 func setupEnv(t *testing.T) {
-    f, err := excelize.OpenFile("/home/elias/Documentos/go/excelParser/example.xlsx")
-    if err != nil {
-        t.Fatal(err.Error())
-    }
-    file = f
+	f, err := excelize.OpenFile("/home/elias/Documentos/go/excelParser/example.xlsx")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	file = f
 
-    cols, err = file.GetCols(file.GetSheetName(6))
-    if err != nil {
-        t.Fatal(err.Error())
-    }
+	cols, err = file.GetCols(file.GetSheetName(6))
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 }
 
 func TestBuscarLineaEncabezados(t *testing.T) {
-    setupEnv(t)
-    _, err := encontrarFilaEncabezados(cols)
-    if err != nil {
+	setupEnv(t)
+	_, err := encontrarFilaEncabezados(cols)
+	if err != nil {
 		t.Fatal(err.Error())
-    }
+	}
 }
 
 func TestEncabezados(t *testing.T) {
@@ -48,16 +48,16 @@ func TestEncsExamenes(t *testing.T) {
 }
 
 func TestCargarMaterias(t *testing.T) {
-    encs, _ := encontrarFilaEncabezados(cols)
-    e := cargarMaterias(cols, encs)
-    for _, v := range e {
-        println(v.Dias.Lunes)
-    }
+	encs, _ := encontrarFilaEncabezados(cols)
+	e := parsearListaMaterias(cols, encs)
+	for _, v := range e {
+		println(v.Dias.Lunes)
+	}
 }
 
 func TestIntegracion(t *testing.T) {
-    _, err := ParsearArchivo("/home/elias/Documentos/go/excelParser/example.xlsx")
-    if err != nil {
-        t.Fatal(err.Error())
-    }
+	_, err := ParsearArchivo("/home/elias/Documentos/go/excelParser/example.xlsx")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 }

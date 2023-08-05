@@ -32,9 +32,9 @@ type examen struct {
 }
 
 type Carrera struct {
-	Asignaturas []*Materia `json:"Asignaturas"`
-	Nombre      string     `json:"nombre"`
-	Index       int        `json:"index"`
+	Asignaturas []Materia `json:"Asignaturas"`
+	Nombre      string    `json:"nombre"`
+	Index       int       `json:"index"`
 }
 
 const (

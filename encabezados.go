@@ -7,8 +7,6 @@ package excelParser
 
 import (
 	"strings"
-
-	"github.com/xuri/excelize/v2"
 )
 
 type encabezado struct {
@@ -79,31 +77,4 @@ func buscarEncsExamenes(cols [][]string, filaEncs encabezado) map[int]encExamen 
 		col++
 	}
 	return resultado
-}
-
-// funcion principal de la libreria
-func ParsearArchivo(file string) ([][]Materia, error) {
-	f, err := excelize.OpenFile(file)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	var res [][]Materia
-	sheets := f.GetSheetList()
-    // parsear todas las hojas
-	for i := 1; i < len(sheets); i++ {
-		cols, err := f.GetCols(sheets[i])
-		if err != nil {
-			return nil, err
-		}
-
-		encs, err := encontrarFilaEncabezados(cols)
-		if err != nil {
-			return nil, err
-		}
-
-		res = append(res, cargarMaterias(cols, encs))
-	}
-	return res, nil
 }

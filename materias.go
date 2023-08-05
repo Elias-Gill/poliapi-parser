@@ -15,7 +15,7 @@ func contarMaterias(cols [][]string, filaEncs encabezado) int {
 	return len(cols[filaEncs.columna])
 }
 
-func cargarMaterias(cols [][]string, filaEncs encabezado) []Materia {
+func parsearListaMaterias(cols [][]string, filaEncs encabezado) []Materia {
 	encs := buscarEncabezados(cols, filaEncs)
 	exms := buscarEncsExamenes(cols, filaEncs)
 
@@ -29,17 +29,17 @@ func cargarMaterias(cols [][]string, filaEncs encabezado) []Materia {
 			Seccion:    cols[encs[seccion].columna][i],
 
 			// -- examenes --
-            // parciales
-			Parcial1: cols[exms[parcial1].colFecha][i] + 
-            "  " + cols[exms[parcial1].colHora][i],
-			Parcial2: cols[exms[parcial2].colFecha][i] + 
-            "  " + cols[exms[parcial1].colHora][i],
+			// parciales
+			Parcial1: cols[exms[parcial1].colFecha][i] +
+				"  " + cols[exms[parcial1].colHora][i],
+			Parcial2: cols[exms[parcial2].colFecha][i] +
+				"  " + cols[exms[parcial1].colHora][i],
 
-            // finales
-			Final1:   cols[exms[final1].colFecha][i] + 
-            "  " + cols[exms[final1].colHora][i],
-			Final2:   cols[exms[final2].colFecha][i] + 
-            "  " + cols[exms[final2].colHora][i],
+			// finales
+			Final1: cols[exms[final1].colFecha][i] +
+				"  " + cols[exms[final1].colHora][i],
+			Final2: cols[exms[final2].colFecha][i] +
+				"  " + cols[exms[final2].colHora][i],
 
 			// -- dias de clase --
 			Dias: Dias{
