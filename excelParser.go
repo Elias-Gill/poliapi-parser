@@ -1,6 +1,10 @@
 package excelParser
 
-import "github.com/xuri/excelize/v2"
+import (
+	"io"
+
+	"github.com/xuri/excelize/v2"
+)
 
 // funcion principal de la libreria
 func ParseFileFromName(file string) ([]Carrera, error) {
@@ -34,12 +38,17 @@ func ParseFileFromName(file string) ([]Carrera, error) {
 	return res, nil
 }
 
-func ParseFileFromIo(file *excelize.File) ([]Carrera, error) {
+func ParseFileFromIo(file io.ReadCloser) ([]Carrera, error) {
     var res []Carrera
-    sheets := file.GetSheetList()
+    f, err := excelize.OpenReader(file)
+    if err != nil {
+        return nil,err
+    }
+
     // parsear todas las hojas
+    sheets := f.GetSheetList()
     for i := 1; i < len(sheets); i++ {
-        cols, err := file.GetCols(sheets[i])
+        cols, err := f.GetCols(sheets[i])
         if err != nil {
             return nil, err
         }
